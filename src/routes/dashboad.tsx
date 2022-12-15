@@ -18,6 +18,7 @@ import SendMessagePage from "../pages/ChatPage";
 import ContactsPage from "../pages/Contacts";
 import Sidebar from "../components/Sidebar";
 import GroupPage from "../pages/GroupPage";
+import Broadcast from "../pages/Broadcast";
 import { DrawerLeft, DrawerProvider } from "../components/Drawer";
 
 export function Dashboard() {
@@ -27,8 +28,9 @@ export function Dashboard() {
         <DrawerProvider>
           <DrawerLeft menuContent={<Sidebar />}>
             <Route path="/chat" component={SendMessagePage} />
-            <Route path="/contatos" component={ContactsPage} />
-            <Route path="/grupo" component={GroupPage} />
+            <Route path="/contact" component={ContactsPage} />
+            <Route path="/group" component={GroupPage} />
+            <Route path="/broadcast" component={Broadcast} />
           </DrawerLeft>
         </DrawerProvider>
       </Switch>

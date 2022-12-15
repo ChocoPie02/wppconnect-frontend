@@ -143,8 +143,8 @@ function ModalCreateGroup({open, handleClose}) {
                     handleCloseBackdrop();
                     Swal.fire({
                         icon: 'success',
-                        title: 'Sucesso',
-                        text: 'O seu grupo foi criado com sucesso!',
+                        title: 'success',
+                        text: 'Your group has been successfully created!',
                     });
                 }, 3000);
             } catch (e) {
@@ -152,7 +152,7 @@ function ModalCreateGroup({open, handleClose}) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Houve um erro ao criar o grupo, tente novamente mais tarde...',
+                    text: 'There was an error creating the group, please try again later...',
                 });
             }
         }

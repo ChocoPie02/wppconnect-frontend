@@ -82,7 +82,10 @@ const SendMessagePage = () => {
     useEffect(() => {
         async function checkConnection() {
             try {
+                console.log(getToken())
+                console.log(getSession())
                 await api.get(`${getSession()}/check-connection-session`, config());
+                
                 await getAllChats();
                 await getAllContacts();
             } catch (e) {
@@ -282,11 +285,11 @@ const SendMessagePage = () => {
         try {
             if (contact.id.includes("@g.us")) {
                 const {data} = await api.get(`${getSession()}/chat-by-id/${contact.id.replace(/[@g.us,@g.us]/g, "")}?isGroup=true`, config());
-                await api.post(`${getSession()}/send-seen`,{phone: contact.id.replace("@g.us", "")}, config());
+                //await api.post(`${getSession()}/send-seen`,{phone: contact.id.replace("@g.us", "")}, config());
                 setAllMessages(data?.response || []);
             } else {
                 const {data} = await api.get(`${getSession()}/chat-by-id/${contact.id.replace(/[@c.us,@c.us]/g, "")}?isGroup=false`, config());
-                await api.post(`${getSession()}/send-seen`,{phone: contact.id.replace("@c.us", "")}, config());
+                //await api.post(`${getSession()}/send-seen`,{phone: contact.id.replace("@c.us", "")}, config());
                 setAllMessages(data?.response || []);
             }
         } catch (e) {
@@ -333,7 +336,7 @@ const SendMessagePage = () => {
             clearAndScrollToBottom();
             setSelectedMessage(null);
         } else {
-            toast.error("Digite uma mensagem!", {
+            toast.error("Type a message!", {
                 position: "bottom-center",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -495,8 +498,9 @@ const SendMessagePage = () => {
                             <h3>
                                 {choosedContact.name === undefined
                                 ? choosedContact.id
-                                    .replace(/[@c.us,@g.us]/g, "")
+                                .replace(/[@c.us,@g.us]/g, "")
                                 : choosedContact.name}
+                                
                             </h3>
                             </div>
                         </HeaderContact>
@@ -505,7 +509,7 @@ const SendMessagePage = () => {
                         <ul ref={chatRef} style={{ overflowX: "hidden" }}>
                         {!hasNoMore && hasMessages && allMessages.length > 0 && (
                             <LoadMoreComponent onClick={loadMore}>
-                                Carregar mais{loadingMoreMessages && <>&nbsp;&nbsp;&nbsp;<CircularProgress size={10}/></>}
+                                load more{loadingMoreMessages && <>&nbsp;&nbsp;&nbsp;<CircularProgress size={10}/></>}
                             </LoadMoreComponent>
                         )}
 
@@ -556,7 +560,7 @@ const SendMessagePage = () => {
                             </div>
                             <div>
                                 <MyTooltip
-                                    name="Cancelar"
+                                    name="Cancel"
                                     icon={<CancelIcon />}
                                     onClick={() => setSelectedMessage(null)}
                                 />
@@ -568,7 +572,7 @@ const SendMessagePage = () => {
                         {choosedContact.length <= 0 ? null : (
                             <div className={"bottom-container"}>
                                 <textarea
-                                placeholder={"Digite uma mensagem..."}
+                                placeholder={"Type a message..."}
                                 onKeyDown={(event) => {
                                     if (event.ctrlKey && event.key === "Enter") {
                                     sendMessage();

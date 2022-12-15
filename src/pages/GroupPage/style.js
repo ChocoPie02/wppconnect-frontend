@@ -21,7 +21,7 @@ export const Layout = styled.div`
 `;
 
 export const Container = styled.div`
-  width: 100%;
+  width: 120%;
   height: 100%;
   display: flex;
 `;

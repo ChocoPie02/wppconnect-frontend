@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export const TOKEN_KEY = "@WPPConnect-Token";
+//export const TOKEN_KEY = "@WPPConnect-Token";
+export const TOKEN_KEY = "FORTESTING";
 
 export const defaultKey = () => localStorage.getItem(TOKEN_KEY);
 

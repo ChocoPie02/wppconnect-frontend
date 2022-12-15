@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 import React, {useEffect, useState} from "react";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from '@mui/icons-material/KeyboardArrowRight';
+import {useDrawer} from "components/Drawer";
 import {Container, Layout, LeftContainer, RightContainer} from "./style";
 import {HeaderComponent, TableContainer} from "../Contacts/style";
 import api from "../../services/api";
@@ -27,6 +30,7 @@ import {useJsonToCsv} from 'react-json-csv';
 const {saveAsCsv} = useJsonToCsv();
 
 const GroupPage = () => {
+    const drawerCtx = useDrawer();
     const [groups, setGroups] = useState([]);
     const [, setSelected] = useState(1);
     const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -75,6 +79,17 @@ const GroupPage = () => {
             <ModalCreateGroup handleClose={handleCloseCreate} open={openModalCreate}/>
             <Container>
                 <LeftContainer>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={() => {
+                        drawerCtx.open()
+                    }}
+                    edge="start"
+                    // className={clsx(classes.menuButton, open && classes.hide)}
+                >
+                    <MenuIcon/>
+                </IconButton>
                     <ul>
                         <li onClick={() => setSelected(1)}>
                             <div className={"wrapper-li"}>
@@ -159,7 +174,7 @@ const GroupPage = () => {
                         </h2>
 
                         <div>
-                            <input placeholder={"Procurar grupo..."}/>
+                            <input placeholder={"Search group..."}/>
                         </div>
                     </HeaderComponent>
 

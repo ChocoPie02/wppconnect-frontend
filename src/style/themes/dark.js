@@ -1,5 +1,5 @@
 export default {
-    name: "light",
+    name: "dark",
     colors: {
         primary: "",
         secondary: "",

@@ -25,10 +25,10 @@ export function AlertDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={close} color="primary">
-          Cancelar
+          Cancel
         </Button>
         <Button onClick={confirm} color="primary" autoFocus>
-          Confirmar
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>

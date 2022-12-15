@@ -18,16 +18,17 @@ import {makeStyles} from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
-import {Container, Description, Formulario, ImageCustom, Layout, Title} from "./style";
+import {Container, Description, Formula, ImageCustom, Layout, Title} from "./style";
 import {X} from "react-feather";
 import api, {socket} from "../../services/api";
 import ModalMenu from "../../components/MenuModal";
 import ErrorModal from "../../components/ErrorModal";
 import BackdropComponent from "../../components/BackdropComponent";
 import {useLocation} from "react-router-dom";
-import {login} from "../../services/auth";
+import {login,getToken} from "../../services/auth";
 import LoginImage from "../../assets/login-v2.72cd8a26.svg";
 
+const SECRET_KEY = window.IP_SECRET_KEY;
 const useStyles = makeStyles((theme) => ({
     modal: {
         display: "flex",
@@ -44,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
         height: "100%"
     },
 }));
+
+function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
 
 export default function LoginPage({history}) {
     const classes = useStyles();
@@ -62,6 +67,7 @@ export default function LoginPage({history}) {
     const {state: haveLogin} = useLocation();
 
     useEffect(() => {
+
         socket.on("qrCode", (qrCode) => {
             if (session === qrCode.session) {
                 setQrCode(qrCode.data);
@@ -75,7 +81,7 @@ export default function LoginPage({history}) {
         socket.off("session-logged").on("session-logged", (status) => {
             if (status.session === session) {
                 if (token) {
-                    insertLocalStorage();
+                    insertLocalStorage(getToken());
 
                     setTimeout(() => {
                         history.push("/chat");
@@ -83,6 +89,7 @@ export default function LoginPage({history}) {
                 }
             }
         });
+        
     }, [session, token]);
 
     async function submitSession(e) {
@@ -91,44 +98,83 @@ export default function LoginPage({history}) {
 
         if (session === "") {
             handleOpenErrorModal();
-            setTitleError("Preencha todos os campos");
-            setErrorMessage("Você precisa preencher todos os campos antes de continuar.");
+            setTitleError("Fill in all fields");
+            setErrorMessage("You need to fill in all fields before proceeding.");
         } else {
             handleToggleBackdrop();
+            const generate = await api.post(`${session}/${SECRET_KEY}/generate-token`, null, null);
+            if (generate.data.status == "success"){
+                setToken(generate.data.token);
+                insertLocalStorage(generate.data.token);
+            } else {
+                handleOpenErrorModal();
+                setTitleError("Can't Generate Token");
+                setErrorMessage("You need to check up config ip server and secret key");
+            }
             await startSession();
         }
     }
 
-    function insertLocalStorage() {
-        login(JSON.stringify({session: session, token: token}));
+    function insertLocalStorage(tok) {
+        login(JSON.stringify({session: session, token: tok}));
+        setToken(tok);
+        
     }
 
     async function startSession() {
         try {
             const config = {
-                headers: {Authorization: `Bearer ${token}`}
+                headers: {Authorization: `Bearer ${getToken()}`}
             };
 
             const checkConn = await api.get(`${session}/check-connection-session`, config);
             if (!checkConn.data.status) {
-                await signSession();
+                setTimeout(async function () {
+                    await signSession();
+                }, 8000);
+                while(true){
+                    const cek = await api.get(`${session}/status-session`, config);
+                    if (cek.data.status == "CONNECTED"){
+                        break;
+                    }else if (cek.data.status == "INITIALIZING"){
+                        await timeout(8000);
+                        continue
+                    }else if (cek.data.status == "CLOSED"){
+                        setTimeout(async function () {
+                            await signSession();
+                        }, 8000);
+                        await timeout(5000);
+                        //handleOpenErrorModal();
+                        //setTitleError("Can't Connect Device");
+                        //setErrorMessage("Please try again.");
+                        //break;
+                    }else if (cek.data.status == "QRCODE"){
+                        setQrCode(cek.data.qrcode);
+                        handleCloseBackdrop();
+                        await timeout(2000);
+                    }
+                }
+                //console.log('data')
+                //insertLocalStorage(getToken());
+                //history.push("/chat");
             } else {
-                insertLocalStorage();
+                console.log('else')
+                insertLocalStorage(getToken());
                 history.push("/chat");
             }
         } catch (e) {
             setTimeout(function () {
                 handleCloseBackdrop();
                 handleOpenErrorModal();
-                setTitleError("Oops... Algo deu errado.");
-                setErrorMessage("Verifique se a sessão e o token estão corretos.");
+                setTitleError("Oops... Something went wrong.");
+                setErrorMessage("Check that the session and token are correct.");
             }, 2000);
         }
     }
 
     async function signSession() {
         const config = {
-            headers: {Authorization: `Bearer ${token}`}
+            headers: {Authorization: `Bearer ${getToken()}`}
         };
 
         await api.post(`${session}/start-session`, null, config)
@@ -220,50 +266,34 @@ export default function LoginPage({history}) {
 
                                     {
                                         qrCode !== "" ? null : (
-                                            <Formulario onSubmit={(e) => submitSession(e)}>
+                                            <Formula onSubmit={(e) => submitSession(e)}>
                                                 <Title id={"title"}>
-                                                    Entre com sua sessão
+                                                    Login with your session
                                                 </Title>
 
                                                 <Description id={"description"}>
-                                                    Digite o nome da sessão e token para entrar em sua conta
+                                                    Enter session name to log into your account
                                                 </Description>
 
                                                 <div className={"top-info"}>
                                                     <small>
-                                                        Sessão
+                                                        Session
                                                     </small>
                                                 </div>
                                                 <input
                                                     id={"session"}
                                                     autoComplete="off"
-                                                    placeholder="Nome da sessão"
+                                                    placeholder="Session Name"
                                                     value={session}
                                                     onChange={(e) => setSession(e.target.value)}
                                                 />
 
-                                                <div className={"top-info"}>
-                                                    <small>
-                                                        Token
-                                                    </small>
-
-                                                    <span onClick={() => handleOpenModal()}>
-                                                        Não sabe o token?
-                                                    </span>
-                                                </div>
-
-                                                <input
-                                                    id={"token"}
-                                                    autoComplete="off"
-                                                    placeholder="Token"
-                                                    value={token}
-                                                    onChange={(e) =>{setToken(e.target.value)}}
-                                                />
+                                                
 
                                                 <button type="submit" id="send-btn">
-                                                    Enviar
+                                                    Submit
                                                 </button>
-                                            </Formulario>
+                                            </Formula>
                                         )
                                     }
                                 </div>

@@ -22,7 +22,7 @@ const ContactsComponent = ({contacts, onClickContact}) => {
     return (
         <Layout>
             <h2>
-                Contatos
+                Contact
             </h2>
 
             <ul>

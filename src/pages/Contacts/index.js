@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 import React, {useEffect, useState} from "react";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from '@mui/icons-material/KeyboardArrowRight';
+import {useDrawer} from "components/Drawer";
 import {Container, HeaderComponent, Layout, TableContainer} from "./style";
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../services/api";
@@ -29,6 +32,7 @@ import {
 const {saveAsCsv} = useJsonToCsv();
 
 const ContactsPage = () => {
+    const drawerCtx = useDrawer();
     const [data, setData] = useState([]);
     const [contacts, setContacts] = useState([]);
     const [, setSelected] = useState([]);
@@ -116,6 +120,17 @@ const ContactsPage = () => {
         <Layout>
             <Container>
                 <LeftContainer>
+                <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={() => {
+                        drawerCtx.open()
+                    }}
+                    edge="start"
+                    // className={clsx(classes.menuButton, open && classes.hide)}
+                >
+                    <MenuIcon/>
+                </IconButton>
                     <ul>
                         <li onClick={() => setSelected(1)}>
                             <div className={"wrapper-li"}>

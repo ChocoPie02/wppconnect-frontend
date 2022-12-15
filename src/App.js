@@ -20,7 +20,7 @@ import GlobalStyle, {Container, Layout} from "./style/GlobalStyle";
 import Routes from "./routes";
 import "react-toastify/dist/ReactToastify.css";
 import light from "./style/themes/light";
-// import dark from "./style/themes/dark";
+import dark from "./style/themes/dark";
 
 function App() {
     return (

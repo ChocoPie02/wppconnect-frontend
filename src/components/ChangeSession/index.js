@@ -18,14 +18,20 @@ import AllSessionsDialog from "./Dialog";
 import api from "../../services/api";
 import {getSession} from "../../services/auth";
 import config from "../../util/sessionHeader";
+
 import PropTypes from "prop-types";
 
+const SECRET_KEY = window.IP_SECRET_KEY;
+
 function ChangeSessionDialog({open, handleClose, selectedValue}) {
+
     const [sessions, setSessions] = useState([]);
+
+    
 
     useEffect(() => {
         async function getAllSessions() {
-            const {data: {response}} = await api.get(`${getSession()}/show-all-sessions`, config());
+            const {data: {response}} = await api.get(`${SECRET_KEY}/show-all-sessions`, config());
             setSessions(response);
         }
 
@@ -43,6 +49,7 @@ function ChangeSessionDialog({open, handleClose, selectedValue}) {
                 onClose={handleClose}
                 sessions={sessions}
             />
+            
         </div>
     );
 }

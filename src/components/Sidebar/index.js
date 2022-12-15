@@ -20,17 +20,24 @@ import {BarChart, LogOut, MessageCircle, Settings, User, Users} from "react-feat
 import ChangeSessionDialog from "../ChangeSession";
 import {getSession, getToken} from "../../services/auth";
 import api from "../../services/api";
+import SignSession from "../StartSession";
 
 const Sidebar = () => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [openSign, setOpenSign] = useState(false);
     const [selectedValue, setSelectedValue] = useState(getSession());
 
     const handleClickOpen = () => {
         setOpenDialog(true);
     };
 
+    const handleClickClose = () => {
+        setOpenDialog(false);
+    };
+
     const handleClose = (value) => {
         setOpenDialog(false);
+        value == selectedValue?null:setOpenSign(true)
         setSelectedValue(value);
     };
 
@@ -57,7 +64,7 @@ const Sidebar = () => {
             }
         }
         await api.post(`${getSession()}/close-session`, null, config);
-        window.location.href = "/nova-sessao";
+        window.location.href = "/new-session";
     }
 
     return (
@@ -67,6 +74,9 @@ const Sidebar = () => {
                 open={openDialog}
                 selectedValue={selectedValue}
             />}
+            {
+                <SignSession open={openSign} />
+            }
 
             <Container>
                 <MenuItems>
@@ -77,25 +87,20 @@ const Sidebar = () => {
                     </li>
 
                     <li>
-                        <NavLink to={"contatos"} activeClassName={"selected"}>
+                        <NavLink to={"contact"} activeClassName={"selected"}>
                             <User/> Contacts
                         </NavLink>
                     </li>
 
                     <li>
-                        <NavLink to={"grupo"} activeClassName={"selected"}>
+                        <NavLink to={"group"} activeClassName={"selected"}>
                             <Users/> Groups
                         </NavLink>
                     </li>
 
                     <li>
-                        <NavLink
-                            to={"relatorio"}
-                            activeClassName={"selected"}
-                            onClick={(e) => handleClickDisabled(e)}
-                            className={"disabled"}
-                        >
-                            <BarChart/> Reports
+                        <NavLink to={"broadcast"} activeClassName={"selected"}>
+                            <BarChart/> Broadcast
                         </NavLink>
                     </li>
 

@@ -73,7 +73,7 @@ const ConversasComponent = ({chats, setChats, onSearch, onClickContact}) => {
                 >
                     <MenuIcon/>
                 </IconButton>
-                <input placeholder={"Pesquisar"} onChange={(e) => onSearch(e)}/>{" "}
+                <input placeholder={"Search"} onChange={(e) => onSearch(e)}/>{" "}
                 <Search/>
             </SearchComponent>
 
@@ -109,7 +109,7 @@ const ConversasComponent = ({chats, setChats, onSearch, onClickContact}) => {
                                             </p>
                                             <div className={"contact-message"}>
                                                 {!contact.msgs
-                                                    ? "Não foi possível carregar as mensagens anteriores..."
+                                                    ? "Unable to load previous messages..."
                                                     : contact.msgs.length > 0
                                                         ? contact.msgs[contact.msgs.length - 1].type ===
                                                         "image" ||
@@ -121,18 +121,18 @@ const ConversasComponent = ({chats, setChats, onSearch, onClickContact}) => {
                                                         "ptt" ||
                                                         contact.msgs[contact.msgs.length - 1].type ===
                                                         "sticker"
-                                                            ? "Mensagem de mídia"
+                                                            ? "Media Message"
                                                             : contact.msgs[contact.msgs.length - 1].type ===
                                                             "revoked"
-                                                                ? "Mensagem Excluída"
+                                                                ? "Deleted Message"
                                                                 : contact.msgs[contact.msgs.length - 1].type ===
                                                                 "gp2"
-                                                                    ? "Não há mensagens"
+                                                                    ? "There are no messages"
                                                                     : contact.msgs[contact.msgs.length - 1].type ===
                                                                     "notification_template"
-                                                                        ? "Não há mensagens"
+                                                                        ? "There are no messages"
                                                                         : contact.msgs[contact.msgs.length - 1].body
-                                                        : "Não foi possível carregar as mensagens anteriores..."}
+                                                        : "Unable to load previous messages..."}
 
                                                 {contact.unreadCount !== 0 && (
                                                     <div className={"unread-message"}/>

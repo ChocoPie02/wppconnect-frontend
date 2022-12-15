@@ -78,16 +78,16 @@ const ChatComponent = ({
     );
 
     if (type === "image") {
-      imageRef.current.src = `data:image/png;base64, ${response.data}`;
+      imageRef.current.src = `data:image/png;base64, ${response.data.base64}`;
       setDisplay("none");
     } else if (type === "video") {
-      imageRef.current.src = `data:video/webm;base64, ${response.data}`;
+      imageRef.current.src = `data:video/webm;base64, ${response.data.base64}`;
       setDisplay("none");
     } else if (type === "audio") {
-      setAudioUrl(`data:audio/ogg;base64, ${response.data}`);
+      setAudioUrl(`data:audio/ogg;base64, ${response.data.base64}`);
     } else if (type === "document") {
       const a = document.createElement("a");
-      a.href = `data:${option.mimetype};base64, ${response.data}`;
+      a.href = `data:${option.mimetype};base64, ${response.data.base64}`;
       a.download = `${option.filename}`;
       a.click();
     }
@@ -143,7 +143,7 @@ const ChatComponent = ({
   function getReason(m) {
     try {
       const sender = getSender(m);
-      if (m.type === "revoked") return `${sender} apagou mensagem`;
+      if (m.type === "revoked") return `${sender} deleted message`;
       if (m.type === "gp2") {
         let users = [];
         if (m.recipients && Array.isArray(m.recipients)) {
@@ -152,9 +152,9 @@ const ChatComponent = ({
             ""
           );
         }
-        if (m.subtype === "leave") return `${m?.recipients[0]?.user} saiu`;
-        if (m.subtype === "remove") return `${sender} removeu \n${users}`;
-        if (m.subtype === "add") return `${sender} adicionou \n${users}`;
+        if (m.subtype === "leave") return `${m?.recipients[0]?.user} is Out`;
+        if (m.subtype === "remove") return `${sender} removed \n${users}`;
+        if (m.subtype === "add") return `${sender} added \n${users}`;
       }
     } catch (error) {
       return "";
@@ -169,7 +169,7 @@ const ChatComponent = ({
       message.subtype === "picture"
     ) {
       const sender = getSender(message);
-      return `${sender} Alterou a imagem do grupo`;
+      return `${sender} Changed the group image`;
     }
 
     if (!message?.body) return getReason(message);
@@ -184,7 +184,7 @@ const ChatComponent = ({
       },
     },
     {
-      label: "Apagar",
+      label: "Delete",
       method() {
         setAnchorEl(null);
         setOpenDeleteDialog(true);
@@ -319,8 +319,8 @@ const ChatComponent = ({
 
       {openDeleteDialog && (
         <AlertDialog
-          title="Confirma Apagar?"
-          content="Se for possível será apagado para todos, senão, somente para você"
+          title="Confirm Delete?"
+          content="If possible, it will be deleted for everyone, if not, only for you"
           confirm={async () => {
             try {
               await api.post(
@@ -332,7 +332,7 @@ const ChatComponent = ({
                 config()
               );
             } catch (error) {
-              toast.error("Não foi possível apagar", {
+              toast.error("Could not deleted", {
                 position: "bottom-center",
                 autoClose: 2000,
                 hideProgressBar: false,

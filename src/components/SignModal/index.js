@@ -18,7 +18,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
-import {ModalContainer} from "./style";
+import {ModalContainer, ImageCustom, Layout, Title} from "./style";
 import {Link} from "react-feather";
 import PropTypes from "prop-types";
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function ModalMenu({open, handleClose}) {
+function ModalSign({open, handleClose,qrCode}) {
     const classes = useStyles();
 
     const onClose = () => {
@@ -70,9 +70,27 @@ function ModalMenu({open, handleClose}) {
                                 <h2>
                                     Token
                                 </h2>
-                                <p>
-                                    Don't know the token? Have a look at the server documentation. 😃
-                                </p>
+                                {
+                                        qrCode === "" ? null : (
+                                            <div style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}>
+                                                <ImageCustom
+                                                    className={"animation noselect"}
+                                                    autoplay
+                                                    src={qrCode}
+                                                    alt={"Smartphone"}
+                                                    draggable={"false"}
+                                                />
+                                                <Title>
+                                                    Scan QRCode
+                                                </Title>
+                                            </div>
+                                        )
+                                }
                             </div>
 
                             <div className={"bottom-section"}>
@@ -93,9 +111,10 @@ function ModalMenu({open, handleClose}) {
     );
 }
 
-ModalMenu.propTypes = {
+ModalSign.propTypes = {
     open: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired
+    handleClose: PropTypes.func.isRequired,
+    qrCode: PropTypes.string
 };
 
-export default ModalMenu;
+export default ModalSign;

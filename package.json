@@ -36,7 +36,13 @@
       "path": "@commitlint/cz-commitlint"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "@mui/icons-material": "^5.10.16",
+    "nvm": "0.0.4",
+    "react-ace": "^10.1.0",
+    "react-csv-editor": "^0.1.2",
+    "react-csv-reader": "^3.5.2"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-angular": "^17.0.0",
